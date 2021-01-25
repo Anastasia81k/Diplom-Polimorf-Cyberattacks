@@ -1,0 +1,225 @@
+
+FUNCTION_BLOCK attack	// Block definition (there may be more than one block or file)
+
+// Define input variables
+VAR_INPUT
+	src_bytes_2 : REAL;
+	dst_bytes_3 : REAL;
+    wrong_fragment_5 : REAL;
+    count_20 : REAL;
+    srv_count_21 : REAL;
+    serror_rate_22 : REAL;
+    srv_serror_rate_23 : REAL;
+    same_srv_rate_26 : REAL;
+    srv_diff_host_rate_28 : REAL;
+    dst_host_count_29 : REAL;
+    dst_host_srv_count_30 : REAL;
+    dst_host_same_srv_rate_31 : REAL;
+    dst_host_same_src_port_rate_33 : REAL;
+END_VAR
+
+// Define output variable
+VAR_OUTPUT
+	threat : REAL;
+END_VAR
+
+FUZZIFY src_bytes_2
+	TERM VS := (-1, 0) (250, 1) (550, 0);
+    TERM S := (520, 0) (1000, 1) (1500, 0);
+    TERM SM := (1400, 0) (5500, 1) (10500, 0);
+    TERM M := (10000, 0) (12500, 1) (25500, 0);
+    TERM BM := (25000, 0) (40000, 1) (54550, 0);
+    TERM B := (2500000, 0) (77000000, 1) (150000000, 0);
+    TERM VB := (120000000, 0) (350000000, 1) (700000000, 0);
+    TERM D :=  (-11, 0) (-10, 1) (-9, 0);
+END_FUZZIFY
+
+FUZZIFY dst_bytes_3
+	TERM S := (-1, 0) (500, 1) (1000, 0);
+    TERM SM := (1000, 0) (5000, 1) (9999, 0);
+    TERM M := (10000, 0) (60000, 1) (100000, 0);
+    TERM BM := (125000, 0) (600000, 1) (1000000, 0);
+    TERM B := (1100000, 0) (1800000, 1) (2500000, 0);
+    TERM VB := (2400000, 0) (3500000, 1) (5250000, 0);
+
+END_FUZZIFY
+
+
+FUZZIFY wrong_fragment_5
+    TERM M := (-0.5, 0) (0, 1) (0.5, 0);
+    TERM C := (0.5, 0) (1, 1) (1.5, 0);
+    TERM B := (2.5, 0) (3, 1) (3.5, 0);
+    TERM D :=  -100000.0;
+END_FUZZIFY
+
+FUZZIFY count_20
+    TERM M := (-1, 0) (50, 1) (101, 0);
+    TERM C := (99, 0) (200, 1) (305, 0);
+    TERM B := (300, 0) (400, 1) (515, 0);
+    TERM D :=  -100000.0;
+END_FUZZIFY
+
+FUZZIFY srv_count_21
+    TERM M := (-1, 0) (50, 1) (101, 0);
+    TERM C := (99, 0) (200, 1) (305, 0);
+    TERM B := (300, 0) (400, 1) (515, 0);
+END_FUZZIFY
+
+FUZZIFY serror_rate_22
+    TERM M := (-0.5, 0) (0, 1) (0.6, 0);
+    TERM B := (0.5, 0) (0.8, 1) (1.2, 0);
+END_FUZZIFY
+
+FUZZIFY srv_serror_rate_23
+    TERM M := (-0.5, 0) (0, 1) (0.6, 0);
+    TERM B := (0.5, 0) (0.8, 1) (1.2, 0);
+END_FUZZIFY
+
+
+FUZZIFY same_srv_rate_26
+    TERM M := (-0.5, 0) (0, 1) (0.6, 0);
+    TERM B := (0.5, 0) (0.8, 1) (1.2, 0);
+END_FUZZIFY
+
+
+
+FUZZIFY srv_diff_host_rate_28
+    TERM M := (-0.5, 0) (0, 1) (0.6, 0);
+    TERM B := (0.5, 0) (0.8, 1) (1.2, 0);
+END_FUZZIFY
+
+FUZZIFY dst_host_count_29
+    TERM M := (0, 0) (50, 1) (105, 0);
+    TERM C := (100, 0) (150, 1) (205, 0);
+    TERM B := (200, 0) (230, 1) (260, 0);
+END_FUZZIFY
+
+FUZZIFY dst_host_srv_count_30
+    TERM M := (0, 0) (50, 1) (105, 0);
+    TERM C := (100, 0) (150, 1) (205, 0);
+    TERM B := (200, 0) (230, 1) (260, 0);
+END_FUZZIFY
+
+FUZZIFY dst_host_same_srv_rate_31
+    TERM M := (-0.5, 0) (0, 1) (0.6, 0);
+    TERM B := (0.5, 0) (0.8, 1) (1.2, 0);
+END_FUZZIFY
+
+
+FUZZIFY dst_host_same_src_port_rate_33
+    TERM M := (-0.5, 0) (0, 1) (0.6, 0);
+    TERM B := (0.5, 0) (0.8, 1) (1.2, 0);
+END_FUZZIFY
+
+
+DEFUZZIFY threat
+	TERM dos :=  (0.5, 0) (1,1) (1.5,0);
+	TERM r2l := (1.5,0) (2,1) (2.5,0);
+	TERM probe := (3.5,0) (4,1) (4.5,0);
+	TERM normal := (4.5,0) (5,1) (5.5,0);
+	TERM u2r := (5.5,0) (5.75,1) (6,0);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method            // Дефазифікація матодом "цетру маси"
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)     // По замовченню дизифікація = 0
+END_DEFUZZIFY
+
+// Inference rules
+RULEBLOCK No1
+	AND : MIN;	// Use 'min' for 'and'
+	ACT : MIN;	// Use 'min' ACTIVATION method
+    ACCU : MAX; // Use 'max' ACCUMULATION method
+ RULE 1 : IF src_bytes_2 IS BM AND dst_bytes_3 IS SM AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 2 : IF src_bytes_2 IS BM AND dst_bytes_3 IS SM AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 3 : IF src_bytes_2 IS BM AND dst_bytes_3 IS SM AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 4 : IF src_bytes_2 IS M AND dst_bytes_3 IS SM AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 5 : IF src_bytes_2 IS BM AND dst_bytes_3 IS SM AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS B AND dst_host_srv_count_30 IS B AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 6 : IF src_bytes_2 IS BM AND dst_bytes_3 IS SM AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS C AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 7 : IF src_bytes_2 IS M AND dst_bytes_3 IS SM AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS C AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 8 : IF src_bytes_2 IS BM AND dst_bytes_3 IS SM AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS C AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 9 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS B AND srv_serror_rate_23 IS B AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 10 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS B AND srv_serror_rate_23 IS B AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 11 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS B AND srv_serror_rate_23 IS B AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 12 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS B AND srv_serror_rate_23 IS B AND same_srv_rate_26 IS M AND srv_diff_host_rate_28 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 13 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS B AND same_srv_rate_26 IS M AND srv_diff_host_rate_28 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 14 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS B AND srv_serror_rate_23 IS B AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 15 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS B AND srv_serror_rate_23 IS B AND same_srv_rate_26 IS M AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 16 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS B AND srv_count_21 IS M AND serror_rate_22 IS B AND srv_serror_rate_23 IS B AND same_srv_rate_26 IS M AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 17 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS B AND srv_count_21 IS M AND serror_rate_22 IS B AND srv_serror_rate_23 IS B AND same_srv_rate_26 IS M AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS B AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 18 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS B AND srv_serror_rate_23 IS B AND same_srv_rate_26 IS M AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS B AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 19 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS B AND srv_serror_rate_23 IS B AND same_srv_rate_26 IS M AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 20 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS B AND srv_count_21 IS M AND serror_rate_22 IS B AND srv_serror_rate_23 IS B AND same_srv_rate_26 IS M AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 21 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS B AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 22 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS B AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 23 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS B AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 24 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS B AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 25 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 26 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS B AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 27 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS B AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS B AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 28 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS B AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS B AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 29 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS B AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS B AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 30 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS B AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS B AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 31 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS C AND srv_count_21 IS C AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS B AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 32 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS C AND srv_count_21 IS C AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 33 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS C AND srv_count_21 IS C AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS B AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 34 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS C AND srv_count_21 IS C AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS B AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 35 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS C AND srv_count_21 IS C AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS C AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 36 : IF src_bytes_2 IS S AND dst_bytes_3 IS S AND wrong_fragment_5 IS M AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS C AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 37 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS B AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 38 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS C AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 39 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS C AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS B AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 40 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS B AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 41 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS C AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 42 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS B AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS B AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 43 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS B AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS B AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS M AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 44 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS C AND count_20 IS B AND srv_count_21 IS M AND serror_rate_22 IS B AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS M AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 45 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS C AND count_20 IS B AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS M AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 46 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS C AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS B AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS dos;
+     RULE 47 : IF src_bytes_2 IS VS AND dst_bytes_3 IS S AND wrong_fragment_5 IS C AND count_20 IS M AND srv_count_21 IS M AND serror_rate_22 IS M AND srv_serror_rate_23 IS M AND same_srv_rate_26 IS B AND srv_diff_host_rate_28 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS B AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS dos;
+     RULE 48 : IF duration_1 IS VS AND src_bytes_2 IS SM AND dst_bytes_3 IS S AND hot_7 IS M AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS B AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS M THEN threat IS r2l;
+     RULE 49 : IF duration_1 IS VS AND src_bytes_2 IS S AND dst_bytes_3 IS S AND hot_7 IS M AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS B AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS M THEN threat IS r2l;
+     RULE 50 : IF duration_1 IS VS AND src_bytes_2 IS S AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS M AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS M THEN threat IS r2l;
+     RULE 51 : IF duration_1 IS VS AND src_bytes_2 IS S AND dst_bytes_3 IS SM AND hot_7 IS C AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS M AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS M THEN threat IS r2l;
+     RULE 52 : IF duration_1 IS VS AND src_bytes_2 IS S AND dst_bytes_3 IS SM AND hot_7 IS C AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS B AND dst_host_same_srv_rate_31 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS M AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS M THEN threat IS r2l;
+     RULE 53 : IF duration_1 IS B AND src_bytes_2 IS VS AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS M AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS M THEN threat IS r2l;
+     RULE 54 : IF duration_1 IS BM AND src_bytes_2 IS S AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS M AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS M THEN threat IS r2l;
+     RULE 55 : IF duration_1 IS M AND src_bytes_2 IS B AND dst_bytes_3 IS S AND hot_7 IS M AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS M AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS M THEN threat IS r2l;
+     RULE 56 : IF duration_1 IS M AND src_bytes_2 IS B AND dst_bytes_3 IS S AND hot_7 IS M AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS M AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS M THEN threat IS r2l;
+     RULE 57 : IF duration_1 IS M AND src_bytes_2 IS B AND dst_bytes_3 IS S AND hot_7 IS M AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS B AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS M THEN threat IS r2l;
+     RULE 58 : IF duration_1 IS M AND src_bytes_2 IS B AND dst_bytes_3 IS S AND hot_7 IS M AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS B AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS M THEN threat IS r2l;
+     RULE 59 : IF duration_1 IS SM AND src_bytes_2 IS B AND dst_bytes_3 IS S AND hot_7 IS M AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS B AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS M THEN threat IS r2l;
+     RULE 60 : IF duration_1 IS M AND src_bytes_2 IS B AND dst_bytes_3 IS S AND hot_7 IS M AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS B AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS B THEN threat IS r2l;
+     RULE 61 : IF duration_1 IS M AND src_bytes_2 IS S AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_same_src_port_rate_33 IS M AND dst_host_srv_diff_host_rate_34 IS M AND dst_host_serror_rate_35 IS M AND dst_host_srv_serror_rate_36 IS M THEN threat IS r2l;
+     RULE 62 : IF count_20 IS M AND srv_count_21 IS M AND rerror_rate_24 IS B AND srv_rerror_rate_25 IS M AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_rerror_rate_37 IS M AND dst_host_srv_rerror_rate_38 IS M THEN threat IS probe;
+     RULE 63 : IF count_20 IS B AND srv_count_21 IS M AND rerror_rate_24 IS B AND srv_rerror_rate_25 IS M AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_rerror_rate_37 IS M AND dst_host_srv_rerror_rate_38 IS M THEN threat IS probe;
+     RULE 64 : IF count_20 IS B AND srv_count_21 IS M AND rerror_rate_24 IS B AND srv_rerror_rate_25 IS B AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_rerror_rate_37 IS M AND dst_host_srv_rerror_rate_38 IS B THEN threat IS probe;
+     RULE 65 : IF count_20 IS B AND srv_count_21 IS M AND rerror_rate_24 IS B AND srv_rerror_rate_25 IS B AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS B AND dst_host_rerror_rate_37 IS M AND dst_host_srv_rerror_rate_38 IS B THEN threat IS probe;
+     RULE 66 : IF count_20 IS B AND srv_count_21 IS M AND rerror_rate_24 IS B AND srv_rerror_rate_25 IS B AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS B AND dst_host_rerror_rate_37 IS B AND dst_host_srv_rerror_rate_38 IS B THEN threat IS probe;
+     RULE 67 : IF count_20 IS C AND srv_count_21 IS M AND rerror_rate_24 IS B AND srv_rerror_rate_25 IS B AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS B AND dst_host_rerror_rate_37 IS B AND dst_host_srv_rerror_rate_38 IS B THEN threat IS probe;
+     RULE 68 : IF count_20 IS C AND srv_count_21 IS M AND rerror_rate_24 IS B AND srv_rerror_rate_25 IS M AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS B AND dst_host_rerror_rate_37 IS B AND dst_host_srv_rerror_rate_38 IS M THEN threat IS probe;
+     RULE 69 : IF count_20 IS M AND srv_count_21 IS M AND rerror_rate_24 IS M AND srv_rerror_rate_25 IS M AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS B AND dst_host_rerror_rate_37 IS B AND dst_host_srv_rerror_rate_38 IS M THEN threat IS probe;
+     RULE 70 : IF count_20 IS M AND srv_count_21 IS M AND rerror_rate_24 IS M AND srv_rerror_rate_25 IS M AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS M AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS B AND dst_host_rerror_rate_37 IS M AND dst_host_srv_rerror_rate_38 IS M THEN threat IS probe;
+     RULE 71 : IF count_20 IS M AND srv_count_21 IS M AND rerror_rate_24 IS M AND srv_rerror_rate_25 IS M AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_rerror_rate_37 IS M AND dst_host_srv_rerror_rate_38 IS M THEN threat IS probe;
+     RULE 72 : IF count_20 IS M AND srv_count_21 IS M AND rerror_rate_24 IS M AND srv_rerror_rate_25 IS B AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS B AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_rerror_rate_37 IS M AND dst_host_srv_rerror_rate_38 IS B THEN threat IS probe;
+     RULE 73 : IF count_20 IS M AND srv_count_21 IS M AND rerror_rate_24 IS B AND srv_rerror_rate_25 IS B AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS B AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_rerror_rate_37 IS M AND dst_host_srv_rerror_rate_38 IS B THEN threat IS probe;
+     RULE 74 : IF count_20 IS M AND srv_count_21 IS M AND rerror_rate_24 IS B AND srv_rerror_rate_25 IS M AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS B AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS M AND dst_host_rerror_rate_37 IS M AND dst_host_srv_rerror_rate_38 IS M THEN threat IS probe;
+     RULE 75 : IF count_20 IS B AND srv_count_21 IS M AND rerror_rate_24 IS B AND srv_rerror_rate_25 IS M AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS B AND dst_host_rerror_rate_37 IS B AND dst_host_srv_rerror_rate_38 IS M THEN threat IS probe;
+     RULE 76 : IF count_20 IS C AND srv_count_21 IS M AND rerror_rate_24 IS B AND srv_rerror_rate_25 IS M AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS B AND dst_host_rerror_rate_37 IS M AND dst_host_srv_rerror_rate_38 IS M THEN threat IS probe;
+     RULE 77 : IF count_20 IS C AND srv_count_21 IS M AND rerror_rate_24 IS B AND srv_rerror_rate_25 IS B AND same_srv_rate_26 IS M AND diff_srv_rate_27 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_diff_srv_rate_32 IS B AND dst_host_rerror_rate_37 IS M AND dst_host_srv_rerror_rate_38 IS B THEN threat IS probe;
+     RULE 78 : IF duration_1 IS VS AND src_bytes_2 IS SM AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND root_shell_11 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS u2r;
+     RULE 79 : IF duration_1 IS VS AND src_bytes_2 IS SM AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND root_shell_11 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS M THEN threat IS u2r;
+     RULE 80 : IF duration_1 IS VS AND src_bytes_2 IS SM AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND root_shell_11 IS M AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS u2r;
+     RULE 81 : IF duration_1 IS VS AND src_bytes_2 IS SM AND dst_bytes_3 IS M AND hot_7 IS M AND logged_in_9 IS B AND root_shell_11 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS u2r;
+     RULE 82 : IF duration_1 IS VS AND src_bytes_2 IS VS AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND root_shell_11 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS u2r;
+     RULE 83 : IF duration_1 IS VS AND src_bytes_2 IS VS AND dst_bytes_3 IS M AND hot_7 IS M AND logged_in_9 IS B AND root_shell_11 IS M AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS u2r;
+     RULE 84 : IF duration_1 IS VS AND src_bytes_2 IS SM AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND root_shell_11 IS M AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS M THEN threat IS u2r;
+     RULE 85 : IF duration_1 IS VS AND src_bytes_2 IS SM AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND root_shell_11 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS M THEN threat IS u2r;
+     RULE 86 : IF duration_1 IS VS AND src_bytes_2 IS VS AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND root_shell_11 IS M AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS M AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS u2r;
+     RULE 87 : IF duration_1 IS VS AND src_bytes_2 IS VS AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND root_shell_11 IS M AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS B AND dst_host_same_src_port_rate_33 IS B THEN threat IS u2r;
+     RULE 88 : IF duration_1 IS VS AND src_bytes_2 IS VS AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND root_shell_11 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS M AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS u2r;
+     RULE 89 : IF duration_1 IS VS AND src_bytes_2 IS VS AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND root_shell_11 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS u2r;
+     RULE 90 : IF duration_1 IS VS AND src_bytes_2 IS S AND dst_bytes_3 IS SM AND hot_7 IS M AND logged_in_9 IS B AND root_shell_11 IS B AND count_20 IS M AND srv_count_21 IS M AND same_srv_rate_26 IS B AND dst_host_count_29 IS C AND dst_host_srv_count_30 IS M AND dst_host_same_srv_rate_31 IS M AND dst_host_same_src_port_rate_33 IS M THEN threat IS u2r;
+
+END_RULEBLOCK
+
+
+
+END_FUNCTION_BLOCK

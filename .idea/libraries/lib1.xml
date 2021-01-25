@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="lib1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/java_libes/poi-4.1.2/poi-4.1.2.jar!/" />
+      <root url="jar://$USER_HOME$/java_libes/poi-4.1.2/poi-examples-4.1.2.jar!/" />
+      <root url="jar://$USER_HOME$/java_libes/poi-4.1.2/poi-excelant-4.1.2.jar!/" />
+      <root url="jar://$USER_HOME$/java_libes/poi-4.1.2/poi-ooxml-4.1.2.jar!/" />
+      <root url="jar://$USER_HOME$/java_libes/poi-4.1.2/poi-ooxml-schemas-4.1.2.jar!/" />
+      <root url="jar://$USER_HOME$/java_libes/poi-4.1.2/poi-scratchpad-4.1.2.jar!/" />
+      <root url="file://$USER_HOME$/java_libes/poi-4.1.2/lib" />
+      <root url="file://$USER_HOME$/java_libes/poi-4.1.2/ooxml-lib" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="file://$USER_HOME$/java_libes/poi-4.1.2/docs/apidocs/dev" />
+      <root url="jar://$USER_HOME$/java_libes/poi-bin-4.1.2-20200217 (1).zip!/poi-4.1.2/docs/apidocs/dev" />
+    </JAVADOC>
+    <SOURCES />
+    <jarDirectory url="file://$USER_HOME$/java_libes/poi-4.1.2/lib" recursive="false" />
+    <jarDirectory url="file://$USER_HOME$/java_libes/poi-4.1.2/ooxml-lib" recursive="false" />
+  </library>
+</component>

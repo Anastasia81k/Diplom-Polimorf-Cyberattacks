@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDrawer?>
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="700.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <children>
+      <AnchorPane layoutX="143.0" prefHeight="400.0" prefWidth="558.0">
+         <children>
+            <Pane fx:id="auditPane" prefHeight="400.0" prefWidth="558.0" style="-fx-background-color: #23ce6b;">
+               <children>
+                  <JFXHamburger fx:id="menu" layoutX="482.0" layoutY="31.0" />
+                  <Label layoutX="94.0" layoutY="29.0" prefHeight="32.0" prefWidth="279.0" text="System Monitoring " textFill="#c9b2b2">
+                     <font>
+                        <Font name="Book Antiqua" size="25.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <JFXHamburger fx:id="menu1" layoutX="497.0" layoutY="32.0" />
+            <Pane fx:id="startPane" prefHeight="400.0" prefWidth="558.0" style="-fx-background-color: #0055b6;">
+               <children>
+                  <Label layoutX="121.0" layoutY="15.0" prefHeight="32.0" prefWidth="279.0" text="System Monitoring " textFill="#c9b2b2">
+                     <font>
+                        <Font name="Book Antiqua" size="25.0" />
+                     </font>
+                  </Label>
+                  <ProgressBar fx:id="pbQuartity" layoutX="86.0" layoutY="87.0" prefHeight="32.0" prefWidth="405.0" progress="0.0" />
+                  <Button fx:id="btnStartMonitoring" layoutX="301.0" layoutY="127.0" mnemonicParsing="false" onAction="#handleBtnPlus" prefHeight="40.0" prefWidth="72.0" text="Start" />
+                  <ProgressIndicator fx:id="progressIndicator" layoutX="502.0" layoutY="87.0" progress="0.0" />
+                  <Button fx:id="btnStopMonitoring" layoutX="412.0" layoutY="127.0" mnemonicParsing="false" onAction="#handleBtnPlus" prefHeight="40.0" prefWidth="72.0" text="Stop" />
+               </children>
+            </Pane>
+            <Pane fx:id="homePanel" layoutX="10.0" layoutY="-2.0" prefHeight="400.0" prefWidth="558.0" style="-fx-background-color: #23ce6b;">
+               <children>
+                  <JFXHamburger fx:id="menu2" layoutX="482.0" layoutY="31.0" />
+                  <Label layoutX="47.0" layoutY="6.0" prefHeight="120.0" prefWidth="405.0" text="Підсистема виявлення кібератак" textFill="#c9b2b2">
+                     <font>
+                        <Font name="Book Antiqua" size="25.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="pane1" layoutX="17.0" prefHeight="400.0" prefWidth="265.0">
+         <children>
+            <AnchorPane fx:id="pane2" layoutX="14.0" prefHeight="400.0" prefWidth="143.0" style="-fx-background-color: #f0f2ff;">
+               <children>
+                  <JFXButton fx:id="startButton" layoutY="102.0" prefHeight="40.0" prefWidth="143.0" text="Start">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </JFXButton>
+                  <JFXButton fx:id="auditButton" layoutY="149.0" prefHeight="40.0" prefWidth="143.0" text="Audit">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </JFXButton>
+                  <JFXButton fx:id="exitButton" layoutY="197.0" prefHeight="40.0" prefWidth="143.0" text="Exit">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </JFXButton>
+                  <ImageView fitHeight="72.0" fitWidth="80.0" layoutX="36.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/monitoring.png" />
+                     </image>
+                  </ImageView>
+                  <JFXDrawer layoutX="46.0" layoutY="102.0" />
+               </children>
+               <effect>
+                  <DropShadow />
+               </effect>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="-1.0" prefHeight="400.0" prefWidth="30.0" style="-fx-background-color: #fff;">
+         <effect>
+            <DropShadow />
+         </effect>
+         <children>
+            <ImageView fitHeight="20.0" fitWidth="26.0" layoutX="3.0" layoutY="110.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/icons8_Workflow_64px.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="20.0" fitWidth="14.0" layoutX="9.0" layoutY="159.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/reliabilty.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="20.0" fitWidth="14.0" layoutX="9.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/exit.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
